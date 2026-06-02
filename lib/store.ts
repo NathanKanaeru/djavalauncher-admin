@@ -11,7 +11,7 @@ function getStore(): AppData {
 }
 
 export async function loadData(): Promise<AppData> {
-  if (process.env.VERCEL_KV_URL) {
+  if (process.env.KV_REST_API_URL) {
     try {
       const { kv } = await import("@vercel/kv");
       const data = await kv.get<AppData>(KV_KEY);
@@ -27,7 +27,7 @@ export async function loadData(): Promise<AppData> {
 }
 
 export async function saveData(data: AppData): Promise<void> {
-  if (process.env.VERCEL_KV_URL) {
+  if (process.env.KV_REST_API_URL) {
     try {
       const { kv } = await import("@vercel/kv");
       await kv.set(KV_KEY, data);
