@@ -9,6 +9,7 @@ const initialForm = {
   latestVersionCode: 130,
   latestVersion: "",
   downloadUrl: "",
+  downloadUrl64: "",
   changeLog: "",
 };
 
@@ -37,13 +38,14 @@ export default function UpdatesPage() {
 
       const prevVersion = current.version;
       if (prevVersion && prevVersion.latestVersion && prevVersion.downloadUrl) {
-        const entry: VersionHistoryEntry = {
-          versionCode: prevVersion.latestVersionCode,
-          versionName: prevVersion.latestVersion,
-          downloadUrl: prevVersion.downloadUrl,
-          changeLog: prevVersion.changeLog,
-          archivedAt: new Date().toISOString(),
-        };
+      const entry: VersionHistoryEntry = {
+        versionCode: prevVersion.latestVersionCode,
+        versionName: prevVersion.latestVersion,
+        downloadUrl: prevVersion.downloadUrl,
+        downloadUrl64: prevVersion.downloadUrl64,
+        changeLog: prevVersion.changeLog,
+        archivedAt: new Date().toISOString(),
+      };
         current.versionHistory = [...(current.versionHistory || []), entry];
       }
 
@@ -143,16 +145,29 @@ export default function UpdatesPage() {
             <Link size={16} className="text-accent" />
             Download
           </h2>
-          <div>
-            <label className="label">Download URL</label>
-            <input
-              type="text"
-              className="input w-full"
-              value={form.downloadUrl}
-              onChange={(e) => update("downloadUrl", e.target.value)}
-              placeholder="https://..."
-            />
-            <p className="text-caption text-mute mt-xxs">Direct download link for the latest APK</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-md">
+            <div>
+              <label className="label">Download URL (32-bit)</label>
+              <input
+                type="text"
+                className="input w-full"
+                value={form.downloadUrl}
+                onChange={(e) => update("downloadUrl", e.target.value)}
+                placeholder="https://..."
+              />
+              <p className="text-caption text-mute mt-xxs">Direct link for 32-bit / universal APK</p>
+            </div>
+            <div>
+              <label className="label">Download URL (64-bit)</label>
+              <input
+                type="text"
+                className="input w-full"
+                value={form.downloadUrl64}
+                onChange={(e) => update("downloadUrl64", e.target.value)}
+                placeholder="https://..."
+              />
+              <p className="text-caption text-mute mt-xxs">Direct link for 64-bit APK</p>
+            </div>
           </div>
         </div>
 

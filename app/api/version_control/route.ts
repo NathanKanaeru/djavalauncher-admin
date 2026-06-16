@@ -19,6 +19,7 @@ async function putHandler(req: NextRequest) {
     latestVersionCode: body.latestVersionCode ?? oldVersion.latestVersionCode,
     latestVersion: body.latestVersion ?? oldVersion.latestVersion,
     downloadUrl: body.downloadUrl ?? oldVersion.downloadUrl,
+    downloadUrl64: body.downloadUrl64 ?? oldVersion.downloadUrl64,
     changeLog: body.changeLog ?? oldVersion.changeLog,
   };
 
@@ -29,6 +30,7 @@ async function putHandler(req: NextRequest) {
         versionCode: oldVersion.latestVersionCode,
         versionName: oldVersion.latestVersion,
         downloadUrl: oldVersion.downloadUrl,
+        downloadUrl64: oldVersion.downloadUrl64,
         changeLog: oldVersion.changeLog,
         archivedAt: new Date().toISOString(),
       },

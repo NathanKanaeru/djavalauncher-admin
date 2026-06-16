@@ -5,12 +5,14 @@ import { withApiKey } from "@/lib/with-api-key";
 async function handler(_req: NextRequest) {
   const data = await loadData();
 
-  const entries: { versionCode: number; versionName: string; changeLog: string; publishedAt: string }[] = [];
+  const entries: { versionCode: number; versionName: string; downloadUrl: string; downloadUrl64: string; changeLog: string; publishedAt: string }[] = [];
 
   if (data.version) {
     entries.push({
       versionCode: data.version.latestVersionCode,
       versionName: data.version.latestVersion,
+      downloadUrl: data.version.downloadUrl,
+      downloadUrl64: data.version.downloadUrl64,
       changeLog: data.version.changeLog,
       publishedAt: data.lastUpdatedAt ?? new Date().toISOString(),
     });
@@ -21,6 +23,8 @@ async function handler(_req: NextRequest) {
       entries.push({
         versionCode: h.versionCode,
         versionName: h.versionName,
+        downloadUrl: h.downloadUrl,
+        downloadUrl64: h.downloadUrl64,
         changeLog: h.changeLog,
         publishedAt: h.archivedAt,
       });

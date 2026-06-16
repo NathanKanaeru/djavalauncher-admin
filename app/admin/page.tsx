@@ -111,7 +111,7 @@ export default function DashboardPage() {
           <div className="space-y-sm">
             {[
               { label: "Latest Version", value: `${data.version.latestVersion} (code ${data.version.latestVersionCode})` },
-              { label: "Download URL", value: data.version.downloadUrl || "\u2014", accent: true },
+              { label: "Download URLs", value: `${data.version.downloadUrl ? "32-bit" : "\u2014"} / ${data.version.downloadUrl64 ? "64-bit" : "\u2014"}`, accent: true },
               { label: "Change Log", value: data.version.changeLog || "\u2014" },
               { label: "Featured Servers", value: `${data.featuredServers.length} total` },
               { label: "Announcements", value: `${data.announcements.length} total` },

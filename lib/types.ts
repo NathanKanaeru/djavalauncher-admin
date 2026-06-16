@@ -2,6 +2,7 @@ export interface VersionControl {
   latestVersionCode: number;
   latestVersion: string;
   downloadUrl: string;
+  downloadUrl64: string;
   changeLog: string;
 }
 
@@ -48,6 +49,7 @@ export interface VersionHistoryEntry {
   versionCode: number;
   versionName: string;
   downloadUrl: string;
+  downloadUrl64: string;
   changeLog: string;
   archivedAt: string;
 }
@@ -69,6 +71,7 @@ export function defaultAppData(): AppData {
       latestVersionCode: 130,
       latestVersion: "1.0",
       downloadUrl: "",
+      downloadUrl64: "",
       changeLog: "Initial release",
     },
     announcements: [],

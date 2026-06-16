@@ -43,6 +43,7 @@ const ENDPOINTS: EndpointDoc[] = [
       latestVersionCode: 130,
       latestVersion: "1.0",
       downloadUrl: "https://example.com/djavalauncher.apk",
+      downloadUrl64: "https://example.com/djavalauncher-64bit.apk",
       changeLog: "Initial release",
     }, null, 2),
     curlExample: "curl https://your-domain.vercel.app/api/version_control",
@@ -55,17 +56,19 @@ const ENDPOINTS: EndpointDoc[] = [
     requestBody: JSON.stringify({
       latestVersionCode: 131, latestVersion: "1.1",
       downloadUrl: "https://example.com/djavalauncher-v1.1.apk",
+      downloadUrl64: "https://example.com/djavalauncher-v1.1-64bit.apk",
       changeLog: "- Bug fixes\n- Performance improvements",
     }, null, 2),
     responseExample: JSON.stringify({
       latestVersionCode: 131, latestVersion: "1.1",
       downloadUrl: "https://example.com/djavalauncher-v1.1.apk",
+      downloadUrl64: "https://example.com/djavalauncher-v1.1-64bit.apk",
       changeLog: "- Bug fixes\n- Performance improvements",
     }, null, 2),
     curlExample: `curl -X PUT https://your-domain.vercel.app/api/version_control \\
   -H "Content-Type: application/json" \\
   -H "Authorization: Bearer dk_your_api_key_here" \\
-  -d '{"latestVersionCode":131,"latestVersion":"1.1","downloadUrl":"https://example.com/djavalauncher-v1.1.apk","changeLog":"- Bug fixes\\n- Performance improvements"}'`,
+  -d '{"latestVersionCode":131,"latestVersion":"1.1","downloadUrl":"https://example.com/djavalauncher-v1.1.apk","downloadUrl64":"https://example.com/djavalauncher-v1.1-64bit.apk","changeLog":"- Bug fixes\\n- Performance improvements"}'`,
   },
   {
     method: "GET", path: "/api/changelogs", tag: "Public",
@@ -150,7 +153,7 @@ const ENDPOINTS: EndpointDoc[] = [
     description: "Returns the entire AppData object — version, announcements, servers, and game data sources. Used by the admin panel to populate CRUD forms.",
     auth: true,
     responseExample: JSON.stringify({
-      version: { latestVersionCode: 130, latestVersion: "1.0", downloadUrl: "", changeLog: "Initial release" },
+      version: { latestVersionCode: 130, latestVersion: "1.0", downloadUrl: "", downloadUrl64: "", changeLog: "Initial release" },
       announcements: [],
       featuredServers: [],
       officialServer: null,
@@ -171,13 +174,13 @@ const ENDPOINTS: EndpointDoc[] = [
     description: "Replaces the entire AppData object. This is the **single write endpoint** — all CRUD operations (announcements, servers, version, game data) go through this one endpoint. Missing fields fall back to current values.",
     auth: true,
     requestBody: JSON.stringify({
-      version: { latestVersionCode: 131, latestVersion: "1.1", downloadUrl: "https://...", changeLog: "- Bug fixes" },
+      version: { latestVersionCode: 131, latestVersion: "1.1", downloadUrl: "https://...", downloadUrl64: "https://...", changeLog: "- Bug fixes" },
     }, null, 2),
     responseExample: JSON.stringify({ success: true }, null, 2),
     curlExample: `curl -X PUT https://your-domain.vercel.app/api/admin/data \\
   -H "Content-Type: application/json" \\
   -b cookies.txt \\
-  -d '{"version":{"latestVersionCode":131,"latestVersion":"1.1","downloadUrl":"https://...","changeLog":"- Bug fixes"}}'`,
+  -d '{"version":{"latestVersionCode":131,"latestVersion":"1.1","downloadUrl":"https://...","downloadUrl64":"https://...","changeLog":"- Bug fixes"}}'`,
   },
   {
     method: "POST", path: "/api/admin/server-query", tag: "Admin",

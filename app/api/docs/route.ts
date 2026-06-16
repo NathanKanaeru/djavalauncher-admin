@@ -55,6 +55,7 @@ All endpoints return \`application/json\`. All request bodies use \`application/
                   latestVersionCode: 130,
                   latestVersion: "1.0",
                   downloadUrl: "https://example.com/djavalauncher.apk",
+                  downloadUrl64: "https://example.com/djavalauncher-64bit.apk",
                   changeLog: "Initial release",
                 },
               },
@@ -77,7 +78,8 @@ All endpoints return \`application/json\`. All request bodies use \`application/
                 properties: {
                   latestVersionCode: { type: "integer", description: "Integer version code for programmatic comparison", example: 131 },
                   latestVersion: { type: "string", description: "Human-readable version string", example: "1.1" },
-                  downloadUrl: { type: "string", format: "uri", description: "Direct download URL for the latest APK", example: "https://example.com/djavalauncher-v1.1.apk" },
+                  downloadUrl: { type: "string", format: "uri", description: "Direct download URL for the 32-bit / universal APK", example: "https://example.com/djavalauncher-v1.1.apk" },
+                  downloadUrl64: { type: "string", format: "uri", description: "Direct download URL for the 64-bit APK", example: "https://example.com/djavalauncher-v1.1-64bit.apk" },
                   changeLog: { type: "string", description: "Markdown changelog describing what's new", example: "- Bug fixes\n- Performance improvements" },
                 },
               },
@@ -94,6 +96,7 @@ All endpoints return \`application/json\`. All request bodies use \`application/
                   latestVersionCode: 131,
                   latestVersion: "1.1",
                   downloadUrl: "https://example.com/djavalauncher-v1.1.apk",
+                  downloadUrl64: "https://example.com/djavalauncher-v1.1-64bit.apk",
                   changeLog: "- Bug fixes\n- Performance improvements",
                 },
               },
@@ -224,8 +227,8 @@ All endpoints return \`application/json\`. All request bodies use \`application/
                   items: { $ref: "#/components/schemas/ChangelogEntry" },
                 },
                 example: [
-                  { versionCode: 131, versionName: "1.1", changeLog: "- Bug fixes\n- Performance improvements", publishedAt: "2026-06-16T12:00:00.000Z" },
-                  { versionCode: 130, versionName: "1.0", changeLog: "Initial release", publishedAt: "2026-06-15T08:00:00.000Z" },
+                  { versionCode: 131, versionName: "1.1", downloadUrl: "https://example.com/djavalauncher-v1.1.apk", downloadUrl64: "https://example.com/djavalauncher-v1.1-64bit.apk", changeLog: "- Bug fixes\n- Performance improvements", publishedAt: "2026-06-16T12:00:00.000Z" },
+                  { versionCode: 130, versionName: "1.0", downloadUrl: "https://example.com/djavalauncher.apk", downloadUrl64: "https://example.com/djavalauncher-64bit.apk", changeLog: "Initial release", publishedAt: "2026-06-15T08:00:00.000Z" },
                 ],
               },
             },
@@ -499,8 +502,14 @@ All endpoints return \`application/json\`. All request bodies use \`application/
           downloadUrl: {
             type: "string",
             format: "uri",
-            description: "Direct download URL for the latest APK",
+            description: "Direct download URL for the latest 32-bit / universal APK",
             example: "https://example.com/djavalauncher.apk",
+          },
+          downloadUrl64: {
+            type: "string",
+            format: "uri",
+            description: "Direct download URL for the latest 64-bit APK",
+            example: "https://example.com/djavalauncher-64bit.apk",
           },
           changeLog: {
             type: "string",
@@ -508,7 +517,7 @@ All endpoints return \`application/json\`. All request bodies use \`application/
             example: "- Bug fixes\n- Performance improvements",
           },
         },
-        required: ["latestVersionCode", "latestVersion", "downloadUrl", "changeLog"],
+        required: ["latestVersionCode", "latestVersion", "downloadUrl", "downloadUrl64", "changeLog"],
       },
       ChangelogEntry: {
         type: "object",
@@ -516,10 +525,12 @@ All endpoints return \`application/json\`. All request bodies use \`application/
         properties: {
           versionCode: { type: "integer", description: "Integer version code for comparison", example: 131 },
           versionName: { type: "string", description: "Human-readable version string", example: "1.1" },
+          downloadUrl: { type: "string", format: "uri", description: "Download URL for the 32-bit / universal APK", example: "https://example.com/djavalauncher.apk" },
+          downloadUrl64: { type: "string", format: "uri", description: "Download URL for the 64-bit APK", example: "https://example.com/djavalauncher-64bit.apk" },
           changeLog: { type: "string", description: "Markdown changelog describing what's new in this version", example: "- Bug fixes\n- Performance improvements" },
           publishedAt: { type: "string", format: "date-time", description: "ISO date when this version was published", example: "2026-06-16T12:00:00.000Z" },
         },
-        required: ["versionCode", "versionName", "changeLog", "publishedAt"],
+        required: ["versionCode", "versionName", "downloadUrl", "downloadUrl64", "changeLog", "publishedAt"],
       },
       Announcement: {
         type: "object",
