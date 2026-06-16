@@ -69,14 +69,26 @@ const ENDPOINTS: EndpointDoc[] = [
     curlExample: "curl https://your-domain.vercel.app/api/announcements",
   },
   {
-    method: "GET", path: "/api/hosted", tag: "Public",
-    summary: "List hosted servers",
-    description: "Returns all hosted SA-MP servers with IP, port, player counts, mode, and language. The internal `id` field is stripped from each server.",
+    method: "GET", path: "/api/servers/official", tag: "Public",
+    summary: "Get official server",
+    description: "Returns the single official/main SA-MP server. Includes auto-fetched server details (hostname, players, mode) plus optional custom name, description, and banner URL. Returns `null` if no official server is configured.",
+    auth: false,
+    responseExample: JSON.stringify({
+      ip: "127.0.0.1", port: 7777, hostname: "SA-MP Official Server",
+      players: 24, maxplayers: 100, mode: "Roleplay", language: "English",
+      customName: "Djava Official", description: "Welcome!", bannerUrl: "https://example.com/banner.png",
+    }, null, 2),
+    curlExample: "curl https://your-domain.vercel.app/api/servers/official",
+  },
+  {
+    method: "GET", path: "/api/servers/featured", tag: "Public",
+    summary: "List featured servers",
+    description: "Returns all featured/partner SA-MP servers with IP, port, hostname, player counts, and mode. The internal `id` field is stripped from each server.",
     auth: false,
     responseExample: JSON.stringify([
-      { ip: "127.0.0.1", port: 7777, hostname: "My Server", players: 12, maxplayers: 100, description: "", mode: "Roleplay", language: "English", featuredBanner: "" },
+      { ip: "127.0.0.1", port: 7777, hostname: "Featured Server", players: 12, maxplayers: 100, mode: "Deathmatch", language: "English" },
     ], null, 2),
-    curlExample: "curl https://your-domain.vercel.app/api/hosted",
+    curlExample: "curl https://your-domain.vercel.app/api/servers/featured",
   },
   {
     method: "GET", path: "/api/download_sources", tag: "Public",
@@ -127,6 +139,8 @@ const ENDPOINTS: EndpointDoc[] = [
         pixeldrain: "https://pixeldrain.com/...",
         dropbox: "https://www.dropbox.com/...",
       },
+      versionHistory: [],
+      apiKeys: [],
     }, null, 2),
     curlExample: `curl https://your-domain.vercel.app/api/admin/data \\
   -b cookies.txt`,
@@ -144,6 +158,21 @@ const ENDPOINTS: EndpointDoc[] = [
   -H "Content-Type: application/json" \\
   -b cookies.txt \\
   -d '{"version":{"latestVersionCode":131,"latestVersion":"1.1","downloadUrl":"https://...","changeLog":"- Bug fixes"}}'`,
+  },
+  {
+    method: "POST", path: "/api/admin/server-query", tag: "Admin",
+    summary: "Query SA-MP server details",
+    description: "Accepts an IP and port, queries the SA-MP server via UDP using sampquery, and returns auto-fetched server details (hostname, players, gamemode). Returns 400 if the server is unreachable or times out.",
+    auth: true,
+    requestBody: JSON.stringify({ ip: "127.0.0.1", port: 7777 }, null, 2),
+    responseExample: JSON.stringify({
+      ip: "127.0.0.1", port: 7777, hostname: "My SA-MP Server",
+      players: 12, maxplayers: 100, mode: "Roleplay", language: "",
+    }, null, 2),
+    curlExample: `curl -X POST https://your-domain.vercel.app/api/admin/server-query \\
+  -H "Content-Type: application/json" \\
+  -b cookies.txt \\
+  -d '{"ip":"127.0.0.1","port":7777}'`,
   },
 ];
 
@@ -351,11 +380,13 @@ function getIconForPath(path: string) {
     case "/api/version_control": return RefreshCw;
     case "/api/changelogs": return FileText;
     case "/api/announcements": return Megaphone;
-    case "/api/hosted": return Server;
+    case "/api/servers/official":
+    case "/api/servers/featured": return Server;
     case "/api/download_sources": return Download;
     case "/api/admin/login": return LogIn;
     case "/api/admin/verify": return ShieldCheck;
     case "/api/admin/data": return Database;
+    case "/api/admin/server-query": return Server;
     default: return Code2;
   }
 }
