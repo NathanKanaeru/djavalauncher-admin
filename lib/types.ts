@@ -19,17 +19,15 @@ export interface GameDataSources {
   dropbox: string;
 }
 
-export interface HostedServer {
+export interface ServerEntry {
   id?: string;
   ip: string;
   port: number;
   hostname: string;
   players: number;
   maxplayers: number;
-  description: string;
   mode: string;
   language: string;
-  featuredBanner: string;
 }
 
 export interface ApiKey {
@@ -54,7 +52,8 @@ export interface VersionHistoryEntry {
 export interface AppData {
   version: VersionControl;
   announcements: Announcement[];
-  hostedServers: HostedServer[];
+  officialServer: ServerEntry | null;
+  featuredServers: ServerEntry[];
   gameDataSources: GameDataSources;
   versionHistory: VersionHistoryEntry[];
   lastUpdatedAt?: string;
@@ -70,7 +69,8 @@ export function defaultAppData(): AppData {
       changeLog: "Initial release",
     },
     announcements: [],
-    hostedServers: [],
+    officialServer: null,
+    featuredServers: [],
     gameDataSources: {
       github: "https://github.com/Nathan-Studios/DjavaLauncher/releases/download/datagame/SAMP.zip",
       pixeldrain: "https://pixeldrain.com/api/file/AokkNatH",

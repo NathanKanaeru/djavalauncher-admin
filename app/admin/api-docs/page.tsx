@@ -120,7 +120,8 @@ const ENDPOINTS: EndpointDoc[] = [
     responseExample: JSON.stringify({
       version: { latestVersionCode: 130, latestVersion: "1.0", downloadUrl: "", changeLog: "Initial release" },
       announcements: [],
-      hostedServers: [],
+      featuredServers: [],
+      officialServer: null,
       gameDataSources: {
         github: "https://github.com/...",
         pixeldrain: "https://pixeldrain.com/...",

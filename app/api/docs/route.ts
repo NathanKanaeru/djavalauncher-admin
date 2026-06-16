@@ -7,7 +7,7 @@ const SPEC = {
     version: "1.0.0",
     description: `# DjavaLauncher Public API
 
-REST API for the DjavaLauncher SA-MP mobile launcher. Provides app versioning, announcements, hosted server listings, and game data download sources.
+REST API for the DjavaLauncher SA-MP mobile launcher. Provides app versioning, announcements, server listings (official + featured), and game data download sources.
 
 ## Authentication
 
@@ -93,33 +93,64 @@ All endpoints return \`application/json\`. All request bodies use \`application/
         },
       },
     },
-    "/api/hosted": {
+    "/api/servers/official": {
       get: {
         tags: ["Public"],
-        summary: "List hosted servers",
-        description: "Returns all hosted SA-MP servers. The internal \`id\` field is stripped from each server entry.",
-        operationId: "getHostedServers",
+        summary: "Get official server",
+        description: "Returns the single official/main SA-MP server. Returns \`null\` if no official server is configured. The internal \`id\` field is stripped.",
+        operationId: "getOfficialServer",
         security: [{ apiKey: [] }],
         responses: {
           "200": {
-            description: "Array of hosted servers (without id field)",
+            description: "Official server object or null",
+            content: {
+              "application/json": {
+                schema: {
+                  oneOf: [
+                    { $ref: "#/components/schemas/ServerEntryPublic" },
+                    { type: "null" },
+                  ],
+                },
+                example: {
+                  ip: "127.0.0.1",
+                  port: 7777,
+                  hostname: "My Official SA-MP Server",
+                  players: 24,
+                  maxplayers: 100,
+                  mode: "Roleplay",
+                  language: "English",
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    "/api/servers/featured": {
+      get: {
+        tags: ["Public"],
+        summary: "List featured servers",
+        description: "Returns all featured/partner SA-MP servers. The internal \`id\` field is stripped from each server entry.",
+        operationId: "getFeaturedServers",
+        security: [{ apiKey: [] }],
+        responses: {
+          "200": {
+            description: "Array of featured servers (without id field)",
             content: {
               "application/json": {
                 schema: {
                   type: "array",
-                  items: { $ref: "#/components/schemas/HostedServerPublic" },
+                  items: { $ref: "#/components/schemas/ServerEntryPublic" },
                 },
                 example: [
                   {
                     ip: "127.0.0.1",
                     port: 7777,
-                    hostname: "My SA-MP Server",
+                    hostname: "My Featured SA-MP Server",
                     players: 12,
                     maxplayers: 100,
-                    description: "A cool roleplay server",
-                    mode: "Roleplay",
+                    mode: "Deathmatch",
                     language: "English",
-                    featuredBanner: "https://example.com/banner.png",
                   },
                 ],
               },
@@ -345,6 +376,46 @@ All endpoints return \`application/json\`. All request bodies use \`application/
         security: [{ sessionCookie: [] }],
       },
     },
+    "/api/admin/server-query": {
+      post: {
+        tags: ["Admin"],
+        summary: "Query SA-MP server details",
+        description: "Accepts an IP and port, queries the SA-MP server via UDP, and returns the server details (hostname, players, gamemode, etc). Returns 400 if the server is unreachable or times out.",
+        operationId: "adminServerQuery",
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                required: ["ip", "port"],
+                properties: {
+                  ip: { type: "string", description: "Server IP address", example: "127.0.0.1" },
+                  port: { type: "integer", description: "Server query port", example: 7777 },
+                },
+              },
+            },
+          },
+        },
+        responses: {
+          "200": {
+            description: "Server details fetched successfully",
+            content: {
+              "application/json": {
+                schema: { $ref: "#/components/schemas/ServerEntryPublic" },
+              },
+            },
+          },
+          "400": {
+            description: "Server unreachable or invalid input",
+          },
+          "401": {
+            description: "Unauthorized (no valid session)",
+          },
+        },
+        security: [{ sessionCookie: [] }],
+      },
+    },
   },
   components: {
     securitySchemes: {
@@ -466,9 +537,9 @@ All endpoints return \`application/json\`. All request bodies use \`application/
         },
         required: ["title", "description", "date", "imageUrl"],
       },
-      HostedServer: {
+      ServerEntry: {
         type: "object",
-        description: "A hosted SA-MP server entry (full object with internal id)",
+        description: "A SA-MP server entry (full object with internal id)",
         properties: {
           id: {
             type: "string",
@@ -501,11 +572,6 @@ All endpoints return \`application/json\`. All request bodies use \`application/
             description: "Maximum player capacity",
             example: 100,
           },
-          description: {
-            type: "string",
-            description: "Server description or MOTD",
-            example: "A cool roleplay server",
-          },
           mode: {
             type: "string",
             description: "Game mode (Roleplay, Deathmatch, etc.)",
@@ -516,30 +582,22 @@ All endpoints return \`application/json\`. All request bodies use \`application/
             description: "Primary server language",
             example: "English",
           },
-          featuredBanner: {
-            type: "string",
-            format: "uri",
-            description: "Optional featured banner image URL",
-            example: "https://example.com/banner.png",
-          },
         },
-        required: ["ip", "port", "hostname", "players", "maxplayers", "description", "mode", "language", "featuredBanner"],
+        required: ["ip", "port", "hostname", "players", "maxplayers", "mode", "language"],
       },
-      HostedServerPublic: {
+      ServerEntryPublic: {
         type: "object",
-        description: "A hosted SA-MP server entry (public — id field stripped)",
+        description: "A SA-MP server entry (public — id field stripped)",
         properties: {
           ip: { type: "string", example: "127.0.0.1" },
           port: { type: "integer", example: 7777 },
           hostname: { type: "string", example: "My SA-MP Server" },
           players: { type: "integer", example: 12 },
           maxplayers: { type: "integer", example: 100 },
-          description: { type: "string", example: "A cool roleplay server" },
           mode: { type: "string", example: "Roleplay" },
           language: { type: "string", example: "English" },
-          featuredBanner: { type: "string", example: "https://example.com/banner.png" },
         },
-        required: ["ip", "port", "hostname", "players", "maxplayers", "description", "mode", "language", "featuredBanner"],
+        required: ["ip", "port", "hostname", "players", "maxplayers", "mode", "language"],
       },
       GameDataSources: {
         type: "object",
@@ -598,13 +656,19 @@ All endpoints return \`application/json\`. All request bodies use \`application/
             type: "array",
             items: { $ref: "#/components/schemas/Announcement" },
           },
-          hostedServers: {
+          featuredServers: {
             type: "array",
-            items: { $ref: "#/components/schemas/HostedServer" },
+            items: { $ref: "#/components/schemas/ServerEntry" },
           },
-          gameDataSources: { $ref: "#/components/schemas/GameDataSources" },
+          officialServer: {
+            oneOf: [
+              { $ref: "#/components/schemas/ServerEntry" },
+              { type: "null" },
+            ],
+            description: "The single official/main server, or null if not set",
+          },
         },
-        required: ["version", "announcements", "hostedServers", "gameDataSources"],
+        required: ["version", "announcements", "featuredServers", "officialServer", "gameDataSources"],
       },
     },
   },

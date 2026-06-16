@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { verifyToken } from "@/lib/auth";
 import { loadData, saveData } from "@/lib/store";
 import { AppData } from "@/lib/types";
+import { ServerEntry } from "@/lib/types";
 
 async function checkAuth(req: NextRequest): Promise<boolean> {
   const token = req.cookies.get("session")?.value;
@@ -21,6 +22,8 @@ export async function GET(req: NextRequest) {
     versionHistory: data.versionHistory ?? [],
     apiKeys: data.apiKeys ?? [],
     lastUpdatedAt: data.lastUpdatedAt ?? undefined,
+    officialServer: data.officialServer ?? null,
+    featuredServers: data.featuredServers ?? [],
   });
 }
 
@@ -35,7 +38,8 @@ export async function PUT(req: NextRequest) {
     const updated: AppData = {
       version: body.version ?? current.version,
       announcements: body.announcements ?? current.announcements,
-      hostedServers: body.hostedServers ?? current.hostedServers,
+      featuredServers: body.featuredServers ?? current.featuredServers ?? [],
+      officialServer: body.officialServer ?? current.officialServer ?? null,
       gameDataSources: body.gameDataSources ?? current.gameDataSources,
       versionHistory: body.versionHistory ?? current.versionHistory ?? [],
       lastUpdatedAt: body.lastUpdatedAt ?? current.lastUpdatedAt,

@@ -46,7 +46,7 @@ export default function DashboardPage() {
 
   const stats = [
     { label: "Announcements", value: data.announcements.length, icon: Megaphone, gradient: "from-gradient-start to-gradient-end" },
-    { label: "Hosted Servers", value: data.hostedServers.length, icon: Server, gradient: "from-violet-500 to-pink-500" },
+    { label: "Servers", value: (data.officialServer ? 1 : 0) + data.featuredServers.length, icon: Server, gradient: "from-violet-500 to-pink-500" },
     { label: "App Version", value: `v${data.version.latestVersion}`, icon: RefreshCw, gradient: "from-amber-500 to-orange-500" },
     { label: "Data Sources", value: "3", icon: Database, gradient: "from-emerald-500 to-teal-500" },
   ];
@@ -113,7 +113,7 @@ export default function DashboardPage() {
               { label: "Latest Version", value: `${data.version.latestVersion} (code ${data.version.latestVersionCode})` },
               { label: "Download URL", value: data.version.downloadUrl || "\u2014", accent: true },
               { label: "Change Log", value: data.version.changeLog || "\u2014" },
-              { label: "Hosted Servers", value: `${data.hostedServers.length} total` },
+              { label: "Featured Servers", value: `${data.featuredServers.length} total` },
               { label: "Announcements", value: `${data.announcements.length} total` },
               { label: "Game Data Sources", value: "GitHub / Pixeldrain / Dropbox" },
             ].map((row) => (
@@ -137,7 +137,7 @@ export default function DashboardPage() {
             {[
               { method: "GET", path: "/api/version_control", desc: "App version check", icon: RefreshCw },
               { method: "GET", path: "/api/announcements", desc: "Dashboard announcements", icon: Megaphone },
-              { method: "GET", path: "/api/hosted", desc: "Server list", icon: Server },
+              { method: "GET", path: "/api/servers/featured", desc: "Featured servers", icon: Server },
               { method: "GET", path: "/api/download_sources", desc: "Game data download URLs", icon: Download },
             ].map((ep) => {
               const Icon = ep.icon;
