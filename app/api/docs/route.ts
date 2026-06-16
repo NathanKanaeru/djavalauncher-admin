@@ -62,6 +62,51 @@ All endpoints return \`application/json\`. All request bodies use \`application/
           },
         },
       },
+      put: {
+        tags: ["Public"],
+        summary: "Update app version info",
+        description: "Updates the app version information. If `latestVersionCode` changes, the current version is automatically archived to `versionHistory`. Accepts partial updates — any field not provided falls back to the current value. Requires API key authentication.",
+        operationId: "updateVersionControl",
+        security: [{ apiKey: [] }],
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: {
+                  latestVersionCode: { type: "integer", description: "Integer version code for programmatic comparison", example: 131 },
+                  latestVersion: { type: "string", description: "Human-readable version string", example: "1.1" },
+                  downloadUrl: { type: "string", format: "uri", description: "Direct download URL for the latest APK", example: "https://example.com/djavalauncher-v1.1.apk" },
+                  changeLog: { type: "string", description: "Markdown changelog describing what's new", example: "- Bug fixes\n- Performance improvements" },
+                },
+              },
+            },
+          },
+        },
+        responses: {
+          "200": {
+            description: "Version updated successfully",
+            content: {
+              "application/json": {
+                schema: { $ref: "#/components/schemas/VersionControl" },
+                example: {
+                  latestVersionCode: 131,
+                  latestVersion: "1.1",
+                  downloadUrl: "https://example.com/djavalauncher-v1.1.apk",
+                  changeLog: "- Bug fixes\n- Performance improvements",
+                },
+              },
+            },
+          },
+          "400": {
+            description: "Invalid request body",
+          },
+          "401": {
+            description: "Invalid or missing API key",
+          },
+        },
+      },
     },
     "/api/announcements": {
       get: {

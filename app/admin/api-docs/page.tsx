@@ -48,6 +48,26 @@ const ENDPOINTS: EndpointDoc[] = [
     curlExample: "curl https://your-domain.vercel.app/api/version_control",
   },
   {
+    method: "PUT", path: "/api/version_control", tag: "Public",
+    summary: "Update app version info",
+    description: "Updates the app version programmatically — useful for CI/CD pipelines. Accepts partial updates. When `latestVersionCode` changes, the current version is automatically archived to version history.",
+    auth: false,
+    requestBody: JSON.stringify({
+      latestVersionCode: 131, latestVersion: "1.1",
+      downloadUrl: "https://example.com/djavalauncher-v1.1.apk",
+      changeLog: "- Bug fixes\n- Performance improvements",
+    }, null, 2),
+    responseExample: JSON.stringify({
+      latestVersionCode: 131, latestVersion: "1.1",
+      downloadUrl: "https://example.com/djavalauncher-v1.1.apk",
+      changeLog: "- Bug fixes\n- Performance improvements",
+    }, null, 2),
+    curlExample: `curl -X PUT https://your-domain.vercel.app/api/version_control \\
+  -H "Content-Type: application/json" \\
+  -H "Authorization: Bearer dk_your_api_key_here" \\
+  -d '{"latestVersionCode":131,"latestVersion":"1.1","downloadUrl":"https://example.com/djavalauncher-v1.1.apk","changeLog":"- Bug fixes\\n- Performance improvements"}'`,
+  },
+  {
     method: "GET", path: "/api/changelogs", tag: "Public",
     summary: "Changelogs",
     description: "Returns changelogs for all versions, from latest to earliest. Includes both the current release and every archived version.",
