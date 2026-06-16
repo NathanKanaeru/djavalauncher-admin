@@ -25,6 +25,9 @@ export default function ServersPage() {
 
   const [officialIp, setOfficialIp] = useState("");
   const [officialPort, setOfficialPort] = useState("7777");
+  const [officialCustomName, setOfficialCustomName] = useState("");
+  const [officialDescription, setOfficialDescription] = useState("");
+  const [officialBannerUrl, setOfficialBannerUrl] = useState("");
   const [officialPreview, setOfficialPreview] = useState<Omit<ServerEntry, "id"> | null>(null);
   const [queryLoading, setQueryLoading] = useState(false);
 
@@ -74,7 +77,13 @@ export default function ServersPage() {
   async function saveOfficial() {
     if (!officialPreview && !officialServer) { toast.error("Fetch server details first"); return; }
     const entry: ServerEntry = officialPreview
-      ? { ...officialPreview, id: uuidv4() }
+      ? {
+          ...officialPreview,
+          id: uuidv4(),
+          customName: officialCustomName || undefined,
+          description: officialDescription || undefined,
+          bannerUrl: officialBannerUrl || undefined,
+        }
       : officialServer!;
     try {
       const current = await fetch("/api/admin/data").then((r) => r.json());
@@ -88,6 +97,9 @@ export default function ServersPage() {
         setOfficialServer(entry);
         setOfficialIp("");
         setOfficialPort("7777");
+        setOfficialCustomName("");
+        setOfficialDescription("");
+        setOfficialBannerUrl("");
         setOfficialPreview(null);
         toast.success("Official server saved");
       } else {
@@ -235,8 +247,11 @@ export default function ServersPage() {
                 </div>
                 <div className="min-w-0">
                   <div className="text-heading text-ink truncate">
-                    {officialServer.hostname}
+                    {officialServer.customName || officialServer.hostname}
                   </div>
+                  {officialServer.customName && (
+                    <div className="text-caption text-mute truncate">{officialServer.hostname}</div>
+                  )}
                   <code className="text-caption-mono text-accent bg-surface-raised rounded-xs px-xs py-xxs inline-block mt-xs">
                     {officialServer.ip}:{officialServer.port}
                   </code>
@@ -248,6 +263,18 @@ export default function ServersPage() {
                     <span>{officialServer.mode}</span>
                     <span className="badge">{officialServer.language || "N/A"}</span>
                   </div>
+                  {officialServer.description && (
+                    <div className="text-body text-mute mt-sm max-w-[480px]">
+                      {officialServer.description}
+                    </div>
+                  )}
+                  {officialServer.bannerUrl && (
+                    <div className="mt-sm">
+                      <a href={officialServer.bannerUrl} target="_blank" rel="noopener noreferrer" className="text-caption text-accent hover:underline inline-flex items-center gap-xxs">
+                        View Banner &rarr;
+                      </a>
+                    </div>
+                  )}
                 </div>
               </div>
               <div className="flex items-center gap-xs flex-shrink-0">
@@ -256,6 +283,9 @@ export default function ServersPage() {
                   onClick={() => {
                     setOfficialIp(officialServer.ip);
                     setOfficialPort(String(officialServer.port));
+                    setOfficialCustomName(officialServer.customName || "");
+                    setOfficialDescription(officialServer.description || "");
+                    setOfficialBannerUrl(officialServer.bannerUrl || "");
                     setOfficialPreview(officialServer);
                     setOfficialServer(null);
                   }}
@@ -308,7 +338,7 @@ export default function ServersPage() {
 
             {officialPreview && (
               <div className="bg-surface-raised rounded-lg p-md border border-hairline mb-md animate-fade-in">
-                <div className="text-caption text-mute mb-sm">Preview</div>
+                <div className="text-caption text-mute mb-sm">Server Details (auto-fetched)</div>
                 <div className="flex items-center gap-md flex-wrap">
                   <div className="min-w-0 flex-1">
                     <div className="text-body-strong text-ink truncate">
@@ -327,6 +357,48 @@ export default function ServersPage() {
                 </div>
               </div>
             )}
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-md mb-md">
+              <div className="sm:col-span-2">
+                <label className="label">Custom Name (optional)</label>
+                <input
+                  className="input w-full"
+                  value={officialCustomName}
+                  onChange={(e) => setOfficialCustomName(e.target.value)}
+                  placeholder="My Official Server"
+                />
+                <p className="text-caption text-mute mt-xxs">Override the auto-fetched hostname for display</p>
+              </div>
+              <div className="sm:col-span-2">
+                <label className="label">Description (optional)</label>
+                <textarea
+                  className="textarea w-full"
+                  value={officialDescription}
+                  onChange={(e) => setOfficialDescription(e.target.value)}
+                  rows={2}
+                  placeholder="Server description for the launcher..."
+                />
+              </div>
+              <div className="sm:col-span-2">
+                <label className="label">Banner URL (optional)</label>
+                <input
+                  className="input w-full"
+                  value={officialBannerUrl}
+                  onChange={(e) => setOfficialBannerUrl(e.target.value)}
+                  placeholder="https://example.com/banner.png"
+                />
+                {officialBannerUrl && (
+                  <div className="mt-xs">
+                    <img
+                      src={officialBannerUrl}
+                      alt="Banner preview"
+                      className="max-h-[120px] rounded-md border border-hairline"
+                      onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
+                    />
+                  </div>
+                )}
+              </div>
+            </div>
 
             <button
               className="btn-primary flex items-center gap-xs"

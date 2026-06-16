@@ -28,6 +28,9 @@ export interface ServerEntry {
   maxplayers: number;
   mode: string;
   language: string;
+  customName?: string;
+  description?: string;
+  bannerUrl?: string;
 }
 
 export interface ApiKey {
