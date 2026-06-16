@@ -16,7 +16,12 @@ export async function GET(req: NextRequest) {
   }
 
   const data = await loadData();
-  return NextResponse.json(data);
+  return NextResponse.json({
+    ...data,
+    versionHistory: data.versionHistory ?? [],
+    apiKeys: data.apiKeys ?? [],
+    lastUpdatedAt: data.lastUpdatedAt ?? undefined,
+  });
 }
 
 export async function PUT(req: NextRequest) {

@@ -14,8 +14,11 @@ export async function loadData(): Promise<AppData> {
   if (process.env.KV_REST_API_URL) {
     try {
       const { kv } = await import("@vercel/kv");
-      const data = await kv.get<AppData>(KV_KEY);
-      if (data) return data;
+      const data = await kv.get<Partial<AppData>>(KV_KEY);
+      if (data) {
+        const defaults = defaultAppData();
+        return { ...defaults, ...data };
+      }
       const defaults = defaultAppData();
       await kv.set(KV_KEY, defaults);
       return defaults;
