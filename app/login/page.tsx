@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { LockKeyhole } from "lucide-react";
 
 export default function LoginPage() {
   const [password, setPassword] = useState("");
@@ -13,19 +14,13 @@ export default function LoginPage() {
     e.preventDefault();
     setError("");
     setLoading(true);
-
     try {
       const res = await fetch("/api/admin/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ password }),
       });
-
-      if (!res.ok) {
-        setError("Invalid password");
-        return;
-      }
-
+      if (!res.ok) { setError("Invalid password"); return; }
       router.push("/admin");
     } catch {
       setError("Connection error");
@@ -35,63 +30,32 @@ export default function LoginPage() {
   }
 
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        backgroundColor: "#141218",
-      }}
-    >
-      <div className="card" style={{ width: "100%", maxWidth: 360 }}>
-        <div style={{ textAlign: "center", marginBottom: 24 }}>
-          <div
-            style={{
-              width: 64,
-              height: 64,
-              borderRadius: 20,
-              backgroundColor: "#4f378b",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              margin: "0 auto 16px",
-              fontSize: 28,
-              fontWeight: 700,
-              color: "#eaddff",
-            }}
-          >
-            D
+    <div className="min-h-screen flex items-center justify-center bg-page">
+      <div className="card w-full max-w-[360px] p-xl animate-fade-in">
+        <div className="text-center mb-lg">
+          <div className="w-[56px] h-[56px] rounded-lg bg-accent flex items-center justify-center mx-auto mb-md">
+            <span className="text-white text-2xl font-bold">D</span>
           </div>
-          <h1 style={{ fontSize: 22, fontWeight: 500, margin: 0, color: "#e6e1e5" }}>
-            DjavaLauncher
-          </h1>
-          <p style={{ fontSize: 14, color: "#cac4d0", margin: "4px 0 0" }}>Admin Panel</p>
+          <h1 className="text-heading text-ink m-0">DjavaLauncher</h1>
+          <p className="text-body text-body mt-xxs">Admin Panel</p>
         </div>
-
-        <form onSubmit={handleSubmit}>
-          <label className="label">Password</label>
-          <input
-            type="password"
-            className="input-field"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Enter admin password"
-            autoFocus
-          />
-
-          {error && (
-            <p style={{ color: "#f2b8b5", fontSize: 13, marginTop: 8 }}>
-              {error}
-            </p>
-          )}
-
-          <button
-            type="submit"
-            className="btn-primary"
-            disabled={loading}
-            style={{ width: "100%", marginTop: 24, opacity: loading ? 0.6 : 1 }}
-          >
+        <form onSubmit={handleSubmit} className="flex flex-col gap-md">
+          <div>
+            <label className="label">Password</label>
+            <div className="relative">
+              <LockKeyhole size={16} className="absolute left-sm top-1/2 -translate-y-1/2 text-mute pointer-events-none" />
+              <input
+                type="password"
+                className="input w-full pl-xl"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Enter admin password"
+                autoFocus
+              />
+            </div>
+          </div>
+          {error && <p className="text-caption text-error m-0">{error}</p>}
+          <button type="submit" className="btn-primary w-full justify-center" disabled={loading}>
             {loading ? "Signing in..." : "Sign in"}
           </button>
         </form>

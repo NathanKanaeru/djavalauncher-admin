@@ -32,6 +32,9 @@ export async function PUT(req: NextRequest) {
       announcements: body.announcements ?? current.announcements,
       hostedServers: body.hostedServers ?? current.hostedServers,
       gameDataSources: body.gameDataSources ?? current.gameDataSources,
+      versionHistory: body.versionHistory ?? current.versionHistory ?? [],
+      lastUpdatedAt: body.lastUpdatedAt ?? current.lastUpdatedAt,
+      apiKeys: body.apiKeys ?? current.apiKeys ?? [],
     };
     await saveData(updated);
     return NextResponse.json({ success: true });

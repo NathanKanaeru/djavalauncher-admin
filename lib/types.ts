@@ -32,11 +32,33 @@ export interface HostedServer {
   featuredBanner: string;
 }
 
+export interface ApiKey {
+  id: string;
+  name: string;
+  keyPrefix: string;
+  keyHash: string;
+  createdAt: string;
+  expiresAt: string | null;
+  revoked: boolean;
+  lastUsedAt: string | null;
+}
+
+export interface VersionHistoryEntry {
+  versionCode: number;
+  versionName: string;
+  downloadUrl: string;
+  changeLog: string;
+  archivedAt: string;
+}
+
 export interface AppData {
   version: VersionControl;
   announcements: Announcement[];
   hostedServers: HostedServer[];
   gameDataSources: GameDataSources;
+  versionHistory: VersionHistoryEntry[];
+  lastUpdatedAt?: string;
+  apiKeys: ApiKey[];
 }
 
 export function defaultAppData(): AppData {
@@ -54,5 +76,8 @@ export function defaultAppData(): AppData {
       pixeldrain: "https://pixeldrain.com/api/file/AokkNatH",
       dropbox: "https://www.dropbox.com/scl/fi/mone7qpnna27fey475ugo/SAMP.zip?rlkey=ewhtt87jl7vl9dal2an1eh1se&st=n8twh3rc&dl=1",
     },
+    versionHistory: [],
+    lastUpdatedAt: undefined,
+    apiKeys: [],
   };
 }
